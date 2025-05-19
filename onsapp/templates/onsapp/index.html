@@ -1,0 +1,108 @@
+{% load dict_extras %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ONS Trading Index</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <h1 class="mb-4">Welcome to ONS Trading!</h1>
+    <h2 class="mb-3">Today's Portfolio Suggestion</h2>
+    {% if assets %}
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Symbol</th>
+                    <th>Today's Price (₹)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for asset in assets %}
+                <tr>
+                    <td>{{ asset.name }}</td>
+                    <td>{{ asset.symbol }}</td>
+                    <td>
+                        {% with price=prices|get_item:asset.symbol %}
+                            {% if price %}
+                                ₹{{ price }}
+                            {% else %}
+                                <span class="text-danger">No price</span>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'delete_asset' asset.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this asset?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No assets yet.</p>
+    {% endif %}
+
+    <!-- Capital input form -->
+    <form method="get" class="mb-4 mt-4" style="max-width:600px;">
+        <div class="input-group input-group-lg">
+            <span class="input-group-text">Total Capital (₹)</span>
+            <input type="number" step="any" min="0" class="form-control" name="capital" value="{{ request.GET.capital|default:1000 }}">
+            <button class="btn btn-outline-primary" type="submit">Show Recommendation</button>
+        </div>
+    </form>
+
+    {% if latest_weights and request.GET.capital %}
+        {% with capital=request.GET.capital|to_float %}
+        <div class="card mt-4" style="max-width: 400px;">
+            <div class="card-header bg-success text-white">
+                Recommended Allocation (ONS)
+            </div>
+            <ul class="list-group list-group-flush">
+            {% for symbol, weight in latest_weights.weights.items %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">{{ symbol }}</span>
+                    <span>
+                        {{ weight|floatformat:2 }}%
+                        (₹{{ weight|mul:capital|floatformat:2 }})
+                        {% with asset_id=assets|get_symbol_id:symbol %}
+                            <span style="color:gray; font-size:small;">[asset_id: {{ asset_id }}]</span>
+                            {% if asset_id %}
+                                <form method="post" action="{% url 'delete_asset' asset_id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger ms-2" onclick="return confirm('Delete this asset?');">Delete</button>
+                                </form>
+                            {% endif %}
+                        {% endwith %}
+                    </span>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endwith %}
+    {% elif request.GET.capital %}
+        <div class="alert alert-warning mt-4" style="max-width:400px;">
+            Not enough price history for all assets. Please update prices on at least two different days for each asset.
+        </div>
+    {% endif %}
+
+    <!-- Clear recommendations button -->
+    <form method="post" action="{% url 'clear_recommendations' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-warning mt-3" onclick="return confirm('Clear all recommendations?');">
+            Clear Recommendations
+        </button>
+    </form>
+
+    <div class="mt-4">
+        <a href="{% url 'add_asset' %}" class="btn btn-primary">Add Asset</a>
+        <a href="{% url 'update_prices' %}" class="btn btn-secondary">Update Prices</a>
+        <a href="{% url 'run_ons' %}" class="btn btn-success">Run ONS now</a>
+    </div>
+</div>
+</body>
+</html>
