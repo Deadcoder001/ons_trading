@@ -16,7 +16,7 @@ This project is for individual investors, finance enthusiasts, and anyone intere
 
 ## Badges
 
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/Deadcoder001/ons_trading/blob/main/LICENSE.txt)
 [![GitHub release downloads](https://img.shields.io/github/downloads/Deadcoder001/ons_trading/latest/total.svg)](https://github.com/Deadcoder001/ons_trading/releases/latest)
 
 ## Deployment
