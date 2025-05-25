@@ -3,9 +3,8 @@ from .models import Asset, Price, PortfolioWeight
 from datetime import date
 import numpy as np
 import requests
-import yfinance as yf
 
-# API_KEY = 'c1dc02a0c7f64cca8608fb2b98abcea1'
+API_KEY = 'c1dc02a0c7f64cca8608fb2b98abcea1'
 
 # Show latest portfolio weights
 def index(request):
@@ -81,18 +80,15 @@ def add_asset(request):
 
 # Fetch live price for a given symbol
 def fetch_price(symbol):
+    url = f"https://api.twelvedata.com/time_series?symbol={symbol}&interval=1day&outputsize=2&apikey={API_KEY}"
+    res = requests.get(url)
+    data = res.json()
+    print("API response for", symbol, ":", data)  # <-- Add this line
     try:
-        ticker = yf.Ticker(symbol)
-        data = ticker.history(period="1d")
-        if not data.empty:
-            price = data['Close'].iloc[-1]
-            print(f"Fetched price for {symbol}: {price}")
-            return float(price)
-        else:
-            print(f"No price data for {symbol}")
-            return None
+        today = float(data['values'][0]['close'])
+        return today
     except Exception as e:
-        print(f"Error fetching price for {symbol}: {e}")
+        print("Fetch price error for", symbol, ":", e)
         return None
 
 

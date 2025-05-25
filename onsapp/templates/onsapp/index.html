@@ -4,105 +4,372 @@
 <head>
     <title>ONS Trading Index</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #fafafa;
+    }
+    .navbar {
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        background: #fff;
+        border-radius: 10px;
+        padding: 1rem 0;
+        box-shadow: 0 0 40px rgba(0,0,0,0.03);
+        height: calc(100vh - 4rem);
+        z-index: 1001;
+        }
+    .navbar__menu {
+        position: relative;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        }
+    .navbar__item {
+        position: relative;
+        }
+    .navbar__link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 3.5rem;
+        width: 5.5rem;
+        color: #6a778e;
+        transition: 250ms ease all;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1em;
+        border-radius: 10px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        }
+    .navbar__link span {
+        position: absolute;
+        left: 100%;
+        transform: translate(-3rem);
+        margin-left: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        color: #406ff3;
+        background: #fff;
+        padding: 0.75rem;
+        transition: 250ms ease all;
+        border-radius: 17.5px;
+        font-size: 1em;
+        font-weight: 600;
+        white-space: nowrap;
+        }
+    .navbar__link:hover,
+    .navbar__link:focus {
+        color: #fff;
+        background: #406ff3;
+        }
+    .navbar__link:hover span,
+    .navbar__link:focus span {
+        opacity: 1;
+        transform: translate(0);
+        }
+    .navbar__link .feather {
+        width: 24px;
+        height: 24px;
+        }
+    .container.stack-container {
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      width: 400px;
+      box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+    }
+    .ons-stack {
+     margin-top: 0.5em; /* or 0 */
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #e4e4e7;
+      cursor: pointer;
+      box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+      transition: transform 0.3s, margin-bottom 0.3s;
+    }
+    .list-item .icon {
+      width: 48px;
+      height: 48px;
+      background: #18181b;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+    }
+    .list-item .icon svg {
+      width: 24px;
+      height: 24px;
+      color: white;
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #18181b;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: #71717a;
+    }
+    .date {
+      font-size: 14px;
+      color: #71717a;
+      text-align: right;
+      min-width: 90px;
+    }
+    .show-hide-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      margin: 8px auto 0 auto;
+      width: 140px;
+      min-height: 44px;
+      background: none;
+      color: #71717a;
+      border: 1px solid #e4e4e7;
+      border-radius: 24px;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .show-hide-btn:hover {
+      background: #f4f4f5;
+    }
+    .show,
+    .hide {
+      width: fit-content;
+    }
+    .hide {
+      display: none;
+    }
+    /* .portfolio-stack:not(.expanded) .list-item:nth-child(n+2),
+    .ons-stack:not(.expanded) .list-item:nth-child(n+2) {
+      display: none;
+    } */
+    .stack-container.expanded .show {
+      display: none;
+    }
+    .stack-container.expanded .hide {
+      display: inline-block;
+    }
+    .stack-container.expanded .show-hide-btn svg {
+      transform: rotate(180deg);
+      transition: transform 0.6s;
+    }
+    /* Smooth transition for stack containers */
+.stack-container .list {
+  max-height: 120px; /* enough for 1 item + gap */
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+.stack-container .list .list-item {
+  opacity: 0;
+  pointer-events: none;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  transition: opacity 0.3s, height 0.3s, margin 0.3s, padding 0.3s;
+}
+
+.stack-container .list .list-item:first-child {
+  opacity: 1;
+  pointer-events: auto;
+  height: auto;
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+.stack-container.expanded .list {
+  max-height: 1000px; /* enough for all items */
+  transition: max-height 0.7s cubic-bezier(.4,0,.2,1);
+}
+
+.stack-container.expanded .list .list-item {
+  opacity: 1;
+  pointer-events: auto;
+  height: auto;
+  margin-bottom: 16px;
+  padding: 16px;
+}
+    </style>
 </head>
-<body class="bg-light">
-<div class="container py-4">
-    <h1 class="mb-4">Welcome to ONS Trading!</h1>
-    <h2 class="mb-3">Today's Portfolio Suggestion</h2>
-    {% if assets %}
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>Name</th>
-                    <th>Symbol</th>
-                    <th>Today's Price (₹)</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for asset in assets %}
-                <tr>
-                    <td>{{ asset.name }}</td>
-                    <td>{{ asset.symbol }}</td>
-                    <td>
-                        {% with price=prices|get_item:asset.symbol %}
-                            {% if price %}
-                                ₹{{ price }}
-                            {% else %}
-                                <span class="text-danger">No price</span>
-                            {% endif %}
-                        {% endwith %}
-                    </td>
-                    <td>
-                        <form method="post" action="{% url 'delete_asset' asset.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this asset?');">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No assets yet.</p>
-    {% endif %}
+<body>
+    <nav class="navbar">
+  <ul class="navbar__menu">
+    <li class="navbar__item">
+      <a href="{% url 'index' %}" class="navbar__link"><i data-feather="home"></i><span>Home</span></a>
+    </li>
+    <li class="navbar__item">
+      <a href="{% url 'add_asset' %}" class="navbar__link"><i data-feather="plus-circle"></i><span>Add Asset</span></a>
+    </li>
+    <li class="navbar__item">
+      <a href="{% url 'run_ons' %}" class="navbar__link"><i data-feather="zap"></i><span>Run ONS</span></a>
+    </li>
+    <li class="navbar__item">
+      <form method="post" action="{% url 'clear_recommendations' %}">
+        {% csrf_token %}
+        <button type="submit" class="navbar__link" style="background:none;border:none;padding:0;">
+          <i data-feather="trash-2"></i><span>Clear Stack</span>
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
 
-    <!-- Capital input form -->
-    <form method="get" class="mb-4 mt-4" style="max-width:600px;">
-        <div class="input-group input-group-lg">
-            <span class="input-group-text">Total Capital (₹)</span>
-            <input type="number" step="any" min="0" class="form-control" name="capital" value="{{ request.GET.capital|default:1000 }}">
-            <button class="btn btn-outline-primary" type="submit">Show Recommendation</button>
+
+<div class="container py-4" style="max-width:1100px;">
+  <!-- Custom Gradient Heading and Subheading -->
+  <div class="mb-5 pb-3 text-center" style="margin-bottom: 3.5rem !important;">
+    <h1 class="mb-3 display-4 fw-bold" style="line-height:1.1;">
+      <span style="background: linear-gradient(to right, #38bdf8, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent;">
+      ONS Trading
+      </span>
+    Smarter Portfolio Management.
+    </h1>
+    <p class="lead text-secondary" style="max-width:700px;margin:0 auto;">
+       Optimize your investments with AI-powered allocation and real-time market data. Effortlessly manage, analyze, and grow your portfolio using advanced online learning strategies.
+    </p>
+  </div>
+  <div class="row g-4">
+    <!-- Portfolio Stack (left) -->
+    <div class="col-12 col-md-5 d-flex align-items-start">
+      <div class="container stack-container portfolio-stack w-100">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="mb-0">Your Portfolio</h4>
+          <a href="{% url 'update_prices' %}" class="btn btn-outline-secondary btn-sm" title="Reload Data">
+            <i data-feather="refresh-cw"></i>
+          </a>
         </div>
-    </form>
-
-    {% if latest_weights and request.GET.capital %}
-        {% with capital=request.GET.capital|to_float %}
-        <div class="card mt-4" style="max-width: 400px;">
-            <div class="card-header bg-success text-white">
-                Recommended Allocation (ONS)
+        <div class="list">
+          {% if assets %}
+            {% for asset in assets %}
+            <div class="list-item">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                  <text x="12" y="16" text-anchor="middle" font-size="10" fill="#fff">{{ asset.symbol|slice:":2" }}</text>
+                </svg>
+              </div>
+              <div class="content">
+                <div class="title">{{ asset.name }}</div>
+                <div class="subtitle">{{ asset.symbol }}</div>
+              </div>
+              <div class="date">
+                {% with price=prices|get_item:asset.symbol %}
+                  {% if price %}
+                    ₹{{ price|floatformat:2 }}
+                  {% else %}
+                    <span class="text-danger">No price</span>
+                  {% endif %}
+                {% endwith %}
+              </div>
+              <form method="post" action="{% url 'delete_asset' asset.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-danger ms-2" onclick="return confirm('Delete this asset?');">Delete</button>
+              </form>
             </div>
-            <ul class="list-group list-group-flush">
-            {% for symbol, weight in latest_weights.weights.items %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span class="fw-bold">{{ symbol }}</span>
-                    <span>
-                        {{ weight|floatformat:2 }}%
-                        (₹{{ weight|mul:capital|floatformat:2 }})
-                        {% with asset_id=assets|get_symbol_id:symbol %}
-                            <span style="color:gray; font-size:small;">[asset_id: {{ asset_id }}]</span>
-                            {% if asset_id %}
-                                <form method="post" action="{% url 'delete_asset' asset_id %}" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-danger ms-2" onclick="return confirm('Delete this asset?');">Delete</button>
-                                </form>
-                            {% endif %}
-                        {% endwith %}
-                    </span>
-                </li>
             {% endfor %}
-            </ul>
+          {% else %}
+            <p class="text-muted">No assets yet.</p>
+          {% endif %}
+        </div>
+        <button class="show-hide-btn" onclick="toggleStack(this)">
+          <span class="show">Show All</span>
+          <span class="hide">Hide</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+            <path d="M4 6l4 4 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Total Capital Form (centered between stacks) -->
+    <div class="col-12 col-md-2 d-flex align-items-start justify-content-center">
+      <form method="get" class="mb-4 w-100" style="max-width:220px;">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text">₹</span>
+          <input type="number" step="any" min="0" class="form-control" name="capital" value="{{ request.GET.capital|default:1000 }}" placeholder="Total Capital">
+        </div>
+        <button class="btn btn-outline-primary w-100 mt-2" type="submit">Update Capital</button>
+      </form>
+    </div>
+
+    <!-- ONS Stack (right) -->
+    <div class="col-12 col-md-5 d-flex align-items-start">
+      {% if latest_weights and request.GET.capital %}
+        {% with capital=request.GET.capital|to_float %}
+        <div class="container stack-container ons-stack w-100">
+          <h4 class="mb-3">Recommended Allocation (ONS)</h4>
+          <div class="list">
+            {% for symbol, weight in latest_weights.weights.items %}
+            <div class="list-item">
+              <div class="icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                  <text x="12" y="16" text-anchor="middle" font-size="10" fill="#fff">{{ symbol|slice:":2" }}</text>
+                </svg>
+              </div>
+              <div class="content">
+                <div class="title">{{ symbol }}</div>
+                <div class="subtitle">{{ weight|floatformat:2 }}% allocation</div>
+              </div>
+              <div class="date">₹{{ weight|mul:capital|floatformat:2 }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          <button class="show-hide-btn" onclick="toggleStack(this)">
+            <span class="show">Show All</span>
+            <span class="hide">Hide</span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+              <path d="M4 6l4 4 4-4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </div>
         {% endwith %}
-    {% elif request.GET.capital %}
-        <div class="alert alert-warning mt-4" style="max-width:400px;">
-            Not enough price history for all assets. Please update prices on at least two different days for each asset.
+      {% elif request.GET.capital %}
+        <div class="alert alert-warning mt-4 w-100" style="max-width:400px;">
+          Not enough price history for all assets. Please update prices on at least two different days for each asset.
         </div>
-    {% endif %}
-
-    <!-- Clear recommendations button -->
-    <form method="post" action="{% url 'clear_recommendations' %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-warning mt-3" onclick="return confirm('Clear all recommendations?');">
-            Clear Recommendations
-        </button>
-    </form>
-
-    <div class="mt-4">
-        <a href="{% url 'add_asset' %}" class="btn btn-primary">Add Asset</a>
-        <a href="{% url 'update_prices' %}" class="btn btn-secondary">Update Prices</a>
-        <a href="{% url 'run_ons' %}" class="btn btn-success">Run ONS now</a>
+      {% endif %}
     </div>
+  </div>
 </div>
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace();
+  function toggleStack(btn) {
+    var container = btn.closest('.stack-container');
+    container.classList.toggle('expanded');
+  }
+</script>
+{% include "onsapp/footer.html" %}
 </body>
 </html>

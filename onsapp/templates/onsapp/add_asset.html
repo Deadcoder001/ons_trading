@@ -3,23 +3,154 @@
 <head>
     <title>Add Asset</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        background: linear-gradient(120deg, #f0f9ff 0%, #e0f7fa 100%);
+        min-height: 100vh;
+      }
+      .card {
+        border-radius: 24px;
+        box-shadow: 0 6px 32px 0 rgba(56,189,248,0.12);
+        border: none;
+      }
+      .gradient-heading {
+        background: linear-gradient(to right, #38bdf8, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+      }
+      .navbar {
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        background: #fff;
+        border-radius: 10px;
+        padding: 1rem 0;
+        box-shadow: 0 0 40px rgba(0,0,0,0.03);
+        height: calc(100vh - 4rem);
+        z-index: 1001;
+      }
+      .navbar__menu {
+        position: relative;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .navbar__item {
+        position: relative;
+      }
+      .navbar__link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 3.5rem;
+        width: 5.5rem;
+        color: #6a778e;
+        transition: 250ms ease all;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1em;
+        border-radius: 10px;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .navbar__link span {
+        position: absolute;
+        left: 100%;
+        transform: translate(-3rem);
+        margin-left: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        color: #406ff3;
+        background: #fff;
+        padding: 0.75rem;
+        transition: 250ms ease all;
+        border-radius: 17.5px;
+        font-size: 1em;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .navbar__link:hover,
+      .navbar__link:focus {
+        color: #fff;
+        background: #406ff3;
+      }
+      .navbar__link:hover span,
+      .navbar__link:focus span {
+        opacity: 1;
+        transform: translate(0);
+      }
+      .navbar__link .feather {
+        width: 24px;
+        height: 24px;
+      }
+      @media (max-width: 768px) {
+        .navbar {
+          position: static;
+          width: 100%;
+          height: auto;
+          border-radius: 0;
+          box-shadow: none;
+          margin-bottom: 2rem;
+        }
+      }
+    </style>
 </head>
-<body class="bg-light">
-<div class="container py-4">
-    <h1>Add Asset</h1>
-    <form method="post" class="mb-3">
+<body>
+<nav class="navbar">
+  <ul class="navbar__menu">
+    <li class="navbar__item">
+      <a href="{% url 'index' %}" class="navbar__link"><i data-feather="home"></i><span>Home</span></a>
+    </li>
+    <li class="navbar__item">
+      <a href="{% url 'add_asset' %}" class="navbar__link"><i data-feather="plus-circle"></i><span>Add Asset</span></a>
+    </li>
+    <li class="navbar__item">
+      <a href="{% url 'run_ons' %}" class="navbar__link"><i data-feather="zap"></i><span>Run ONS</span></a>
+    </li>
+    <li class="navbar__item">
+      <form method="post" action="{% url 'clear_recommendations' %}">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="name" class="form-label">Name:</label>
-            <input type="text" name="name" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label for="symbol" class="form-label">Symbol:</label>
-            <input type="text" name="symbol" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Add</button>
-        <a href="{% url 'index' %}" class="btn btn-secondary">Back to Home</a>
-    </form>
+        <button type="submit" class="navbar__link" style="background:none;border:none;padding:0;">
+          <i data-feather="trash-2"></i><span>Clear Stack</span>
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
+<div class="container py-5" style="max-width: 600px;">
+  <div class="row justify-content-center">
+    <div class="col-md-12">
+      <div class="card p-4">
+    <h1 class="mb-3 display-4 fw-bold" style="line-height:1.1;">
+      <span style="background: linear-gradient(to right, #38bdf8, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: transparent;">
+      ONS Trading
+      </span><br>
+        Add Assets
+    </h1>
+        <form method="post" class="mb-3">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="symbol" class="form-label">Symbol:</label>
+                <input type="text" name="symbol" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add</button>
+            <a href="{% url 'index' %}" class="btn btn-outline-secondary w-100 mt-2">Back to Home</a>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace();
+</script>
 </body>
 </html>

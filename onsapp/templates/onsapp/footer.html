@@ -1,0 +1,34 @@
+<footer class="text-center py-4 mt-5" style="background: transparent; color: #6a778e; font-size: 1rem;">
+  <hr style="max-width: 400px; margin: 2rem auto 1rem auto; border-color: #e0e7ef;">
+  <div class="mb-3 d-flex justify-content-center align-items-center gap-3 flex-wrap footer-social-group">
+    <a href="https://facebook.com/" target="_blank" class="mx-2 footer-social" style="text-decoration:none;">
+      <img src="https://img.icons8.com/color/48/facebook-new.png" alt="Facebook" width="28" height="28">
+    </a>
+    <a href="https://instagram.com/" target="_blank" class="mx-2 footer-social" style="text-decoration:none;">
+      <img src="https://img.icons8.com/color/48/instagram-new.png" alt="Instagram" width="28" height="28">
+    </a>
+    <a href="mailto:yourmail@example.com" target="_blank" class="mx-2 footer-social" style="text-decoration:none;">
+      <img src="https://img.icons8.com/color/48/gmail-new.png" alt="Gmail" width="28" height="28">
+    </a>
+  </div>
+  <div>
+    &copy; {{ year|default:2025 }} ONS Trading &mdash; Smarter Portfolio Management
+  </div>
+  <div style="font-size: 0.95em; color: #a0aec0;">
+    Built with <span style="color:#38bdf8;">Django</span> &amp; <span style="color:#10b981;">Bootstrap 5</span>
+  </div>
+  <style>
+    .footer-social-group .footer-social img {
+      transition: filter 0.3s, transform 0.3s;
+    }
+    .footer-social-group:hover .footer-social img {
+      filter: blur(2px) brightness(0.8);
+      transform: scale(0.95);
+    }
+    .footer-social-group .footer-social:hover img {
+      filter: none;
+      transform: scale(1.15);
+      z-index: 2;
+    }
+  </style>
+</footer>
